@@ -1,0 +1,41 @@
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hello World</title>
+</head>
+<body>
+    <div>
+        <button id="qingCangAllButton" type="Button">所有清仓</button>
+    </div>
+    <div>
+        <input type="text" id="qingCangSymbol" value=""/> <button id="qingCangSymbolButton" type="Button">确定</button>
+    </div>
+
+
+
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+    <script text="text/javascript">
+
+        $("#qingCangAllButton").click(function(){
+
+          if(confirm("确定清除所有")){
+                $.get("http://localhost:9186/qingCang", {symbol: ""});
+                }
+        });
+
+        $("#qingCangSymbolButton").click(function(){
+            var qingCangSymbolTxt = $("#qingCangSymbol").val().trim()
+            console.log(qingCangSymbolTxt)
+            if(qingCangSymbolTxt == null || qingCangSymbolTxt ==''){
+                alert("类型必填")
+                return
+            }
+
+          if(confirm("确定清除：\"" + qingCangSymbolTxt + "\"")) {
+              $.get("http://localhost:9186/qingCang", {symbol: qingCangSymbolTxt});
+          }
+        });
+
+    </script>
+</body>
+</html>
+

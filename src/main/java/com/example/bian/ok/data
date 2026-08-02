@@ -1,0 +1,124 @@
+双向
+做空买
+{
+            "alias": "default_alias_type",
+价格            "avgPx": "0.2995",
+币种            "baseName": "SYRUP",
+时间            "cTime": "1764145522666",
+            "displayId": "SYRUP-USDT-SWAP",
+            "fillTime": "1764145522667",
+            "instFamily": "SYRUP-USDT",
+            "instId": "SYRUP-USDT-SWAP",
+            "instType": "SWAP",
+            "lever": "3.0",
+            "nickName": "dalehu",
+订单Id            "ordId": "3075032927791587328",
+            "ordType": "market",
+方向            "posSide": "short",
+            "px": "",
+            "quoteName": "USDT",
+买卖            "side": "sell",
+            "sz": "1",
+            "tradeQuoteCcy": "USDT",
+            "uTime": "1764145522667",
+            "uly": "SYRUP-USDT",
+            "uniqueName": "777930890675843907",
+投资额            "value": "2.995"
+        }
+做空卖
+{
+            "alias": "default_alias_type",
+            "avgPx": "0.3001",
+            "baseName": "SYRUP",
+            "cTime": "1764146968031",
+            "displayId": "SYRUP-USDT-SWAP",
+            "fillTime": "1764146968031",
+            "instFamily": "SYRUP-USDT",
+            "instId": "SYRUP-USDT-SWAP",
+            "instType": "SWAP",
+            "lever": "3.0",
+            "nickName": "dalehu",
+            "ordId": "3075081426193195008",
+            "ordType": "market",
+            "posSide": "short",
+            "px": "",
+            "quoteName": "USDT",
+            "side": "buy",
+            "sz": "1",
+            "tradeQuoteCcy": "USDT",
+            "uTime": "1764146968032",
+            "uly": "SYRUP-USDT",
+            "uniqueName": "777930890675843907",
+            "value": "3.001"
+        },
+
+现有持仓
+双向做多
+{
+    "code": "0",
+    "data": [
+        {
+            "longLever": "1.51",
+            "posData": [
+                {
+                    "alias": "default_alias_type",
+                    "avgPx": "83445.0491800000000008",
+                    "bePx": "83514.7967799231",
+                    "cTime": "1763710500529",
+                    "fee": "-50.067029508",
+                    "fundingFee": "-22.61633291425253",
+                    "instId": "BTC-USDT-SWAP",
+                    "instType": "SWAP",
+                    "last": "86590.1",
+                    "lever": "20",
+                    "liqPx": "23650.70606464298",
+                    "margin": "8659.17",
+                    "marginCcy": "USDT",
+                    "markPx": "86591.7",
+                    "mgnMode": "cross",
+                    "mgnRatio": "165.4710792721406",
+                    "notionalUsd": "173153.958822",
+                    "pnl": "0",
+                    "pos": "200",
+                    "posCcy": "BTC",
+                    "posId": "3035349452573253632",
+                    "posSide": "long",
+                    "quoteCcy": "USDT",
+                    "realizedPnl": "-72.68336242225253",
+                    "upl": "6293.301639999991",
+                    "uplRatio": "0.7541851436176472"
+                },
+                {
+                    "alias": "default_alias_type",
+                    "avgPx": "87.224992000000001",
+                    "bePx": "87.30354896536561",
+                    "cTime": "1763694316833",
+                    "fee": "-13.0837488",
+                    "fundingFee": "-8.73402408973289",
+                    "instId": "LTC-USDT-SWAP",
+                    "instType": "SWAP",
+                    "last": "83.79",
+                    "lever": "10",
+                    "liqPx": "51.85960310963595",
+                    "margin": "17866.5755759102671115",
+                    "marginCcy": "USDT",
+                    "markPx": "83.79",
+                    "mgnMode": "isolated",
+                    "mgnRatio": "55.86457370448299",
+                    "notionalUsd": "41887.87785",
+                    "pnl": "0",
+                    "pos": "500",
+                    "posCcy": "LTC",
+                    "posId": "3023060628895834112",
+                    "posSide": "long",
+                    "quoteCcy": "USDT",
+                    "realizedPnl": "-21.81777288973289",
+                    "upl": "-1717.495999999997",
+                    "uplRatio": "-0.3938082333100124"
+                }
+            ],
+            "shortLever": "0.0"
+        }
+    ],
+    "msg": ""
+}
