@@ -2,9 +2,8 @@ package com.ChongQi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.bian.client.bushu.PrivateConfig;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -59,8 +58,18 @@ public class QiDongJava {
 //                    String command = "nohup java -jar /root/huyl/bushu/bian-0.0.1-tongYong.jar /root/huyl/bushu bianGenDan " + token.getString("token") + " --server.port=10184 &";
 //                    String command = " source /etc/profile; nohup /root/huyl/jdk1.8.0_181/bin/java -jar /root/huyl/bushu/bian-0.0.1-tongYong.jar /root/huyl/bushu bianGenDan "
 //                            + token.getString("token") + "  --server.port=10184 > /root/huyl/bushu/nohup.out 2>&1 &";
-                        String command = " source /etc/profile; nohup /root/huyl/jdk1.8.0_141/bin/java -jar /root/huyl/bushu/bian-0.0.1-tongYong.jar /root/huyl/bushu bianGenDan "
-                                + token.getString("token") + " --server.port=10184 > /root/huyl/bushu/nohup.out 2>&1 &";
+
+                        String command = null;
+                        boolean web = false;
+                        if(StringUtils.isNotBlank(token.getString("cookie"))){
+                            web = true;
+                            command = " source /etc/profile; nohup /root/huyl/jdk1.8.0_141/bin/java -jar /root/huyl/bushu/bian-0.0.1-tongYong.jar /root/huyl/bushu bianGenDan "
+                                    + " web " + " --server.port=10184 >> /root/huyl/bushu/nohup.out 2>&1 &";
+                        }else {
+                            command = " source /etc/profile; nohup /root/huyl/jdk1.8.0_141/bin/java -jar /root/huyl/bushu/bian-0.0.1-tongYong.jar /root/huyl/bushu bianGenDan "
+                                    + token.getString("token") + " --server.port=10184 >> /root/huyl/bushu/nohup.out 2>&1 &";
+                        }
+
 
                         JSch jsch = new JSch();
                         Session session = jsch.getSession(user, host, port);
@@ -72,6 +81,15 @@ public class QiDongJava {
                         session.connect();
 
                         ChannelExec channel = (ChannelExec) session.openChannel("exec");
+
+                        //上传配置文件
+                        if(web){
+                            uploadFile(session, directory + "/token.json", "/root/huyl/bushu/token.json");
+                            System.out.println("token上传成功");
+                            Thread.sleep(1000);
+                        }
+
+                        //执行命令
                         channel.setCommand(command);
 
                         channel.setInputStream(null);
@@ -89,7 +107,7 @@ public class QiDongJava {
                                 System.out.print(msg);
                             }
                             if (channel.isClosed()) {
-                                System.out.println("exit-status: " + channel.getExitStatus());
+//                                System.out.println("exit-status: " + channel.getExitStatus());
                                 break;
                             }
                             try {
@@ -105,6 +123,26 @@ public class QiDongJava {
                         System.out.println(computer + "：启动失败了");
                         return "0";
                     }
+                }
+
+                /**
+                 * SFTP上传文件
+                 */
+                public void uploadFile(Session session, String localFile, String remoteFile) throws JSchException, SftpException {
+                    ChannelSftp sftp = (ChannelSftp) session.openChannel("sftp");
+                    sftp.connect();
+
+                    File local = new File(localFile);
+                    try (InputStream in = new FileInputStream(local)) {
+                        // 覆盖上传
+                        sftp.put(in, remoteFile, ChannelSftp.OVERWRITE);
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    sftp.disconnect();
                 }
             };
             threadPoolExecutor.submit(callable1);
