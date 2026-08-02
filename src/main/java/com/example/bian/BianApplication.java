@@ -1,9 +1,6 @@
 package com.example.bian;
 
-import com.ChongQi.ChongQi;
-import com.ChongQi.QiDongJava;
-import com.ChongQi.QiDongJavaOK;
-import com.ChongQi.QiDongLog;
+import com.ChongQi.*;
 import com.alibaba.fastjson.JSONObject;
 import com.example.OK.QingCangOk;
 import com.example.OK.genDansOk;
@@ -79,6 +76,14 @@ public class BianApplication {
             QiDongJavaOK genDan = new QiDongJavaOK();
             genDan.method(args[0]);
             System.out.println("启动java完成");
+            return;
+        }
+
+        if ("shengJi".equals(args[1])) {
+            System.out.println("升级");
+            shengJi genDan = new shengJi();
+            genDan.method(args[0]);
+            System.out.println("升级完成");
             return;
         }
 
