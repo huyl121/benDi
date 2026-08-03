@@ -82,7 +82,7 @@ public class BianApplication {
         if ("shengJi".equals(args[1])) {
             System.out.println("升级");
             shengJi genDan = new shengJi();
-            genDan.method(args[0]);
+            genDan.method(args);
             System.out.println("升级完成");
             return;
         }

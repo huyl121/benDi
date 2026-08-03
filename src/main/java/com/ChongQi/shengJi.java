@@ -9,18 +9,35 @@ import org.apache.commons.lang.StringUtils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.*;
 
 public class shengJi {
 
     public static void main(String[] args) throws InterruptedException {
         shengJi chongQi = new shengJi();
-        chongQi.method("E://huyl//0bat");
+        args = new String[4];
+        args[0] = "E://huyl//0batok";
+        args[1] = "shengJi";
+
+//        args[2] = "121";
+
+        args[2] = "ok";
+        args[3] = "121";
+
+        chongQi.method(args);
 
     }
 
 
-    public void method(String directory) throws InterruptedException {
+    public void method(String[] args) throws InterruptedException {
+        String directory = args[0];
+        boolean isOk = false;
+        if(args.length > 3){
+            if("ok".equals(args[2].toLowerCase())){
+                isOk = true;
+            }
+        }
         List<String> paths = new ArrayList<>();
         File1.DirectoryScanner(directory, paths);
         for(String path : paths){
@@ -34,6 +51,7 @@ public class shengJi {
                         new ThreadPoolExecutor.DiscardPolicy());
         JSONObject token = PrivateConfig.readJsonFile(directory + "/token.json");
         for(String path : paths){
+            boolean finalIsOk = isOk;
             Callable callable1 = new Callable() {
                 @Override
                 public String call() throws Exception {
@@ -42,7 +60,7 @@ public class shengJi {
                     String ip = config1.getString("ip");
 
                     try{
-                        zhiXing(ip, computer, directory, path, token);
+                        zhiXing(ip, computer, directory, path, token, finalIsOk);
                     }catch (Exception e){
                         e.printStackTrace();
                     }catch (Throwable throwable){
@@ -58,7 +76,7 @@ public class shengJi {
 
 
     }
-    public  void zhiXing(String host, String computer, String directory, String path, JSONObject token) throws Exception {
+    public  void zhiXing(String host, String computer, String directory, String path, JSONObject token, boolean isOk) throws Exception {
         String user = "root";
         int port = 22;
         String password = "4mWkCV88cKBJzPy";
@@ -79,8 +97,13 @@ public class shengJi {
         }
         System.out.println(computer + ":jar包已升级");
         Thread.sleep(3000);
-        QiDongJava chongQi = new QiDongJava();
-        chongQi.mo(directory, path, token);
+        if(isOk){
+            QiDongJavaOK chongQi = new QiDongJavaOK();
+            chongQi.mo(directory, path, token);
+        }else {
+            QiDongJava chongQi = new QiDongJava();
+            chongQi.mo(directory, path, token);
+        }
     }
 
     /**
