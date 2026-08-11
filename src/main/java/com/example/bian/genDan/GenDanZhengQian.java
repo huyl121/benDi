@@ -60,7 +60,7 @@ public class GenDanZhengQian {
 
         args = new String[2];
         PrivateConfig.printLog("开始啦");
-        args[0] = "E://code//biance";
+        args[0] = "E://code//benDi";
         args[1] = "0-genDan";
         PrivateConfig.before(args[0], args[1]);
 

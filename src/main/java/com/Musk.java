@@ -32,12 +32,12 @@ public class Musk {
 
 
         args = new String[2];
-        args[0] = "E://code//biance";
+        args[0] = "E://code//benDi";
         args[1] = "0-genDan";
         PrivateConfig.before(args[0], "0-" + args[1]);
         PrivateConfig.xsw(true);
 
-        JSONObject config = readJsonFile("E:/code/biance/data.json");
+//        JSONObject config = readJsonFile("E:/code/biance/data.json");
 
 //        JSONArray jsonArray = config.getJSONArray("data");
 
@@ -61,7 +61,7 @@ public class Musk {
         int isOk = 0; //0：币安，1：ok的概况，2：okd带单；3：聪明钱
         JSONArray jsonArray = new JSONArray();
         getOp(jsonArray, "4788776444236355328", System.currentTimeMillis(), isOk);
-        BigDecimal beiShu = new BigDecimal("0.0262");
+        BigDecimal beiShu = new BigDecimal("0.062");
         Map<String, BigDecimal> mapCount = new HashMap();
 
 
@@ -128,6 +128,9 @@ public class Musk {
                 executedQty = value.divide(avgPx, 4, BigDecimal.ROUND_HALF_UP);
             }
             if (mapCount.get(symbol) != null) {
+
+
+
                 zongShu++;
                 if (executedQty.multiply(beiShu).compareTo(mapCount.get(symbol)) >= 0) {
                     chengGong++;
@@ -151,7 +154,7 @@ public class Musk {
     }
 
     public static void getOp(JSONArray list, String portfolioId, Long currentTime, int isOk) throws IOException, InterruptedException {
-        if (list.size() > 299) {
+        if (list.size() > 99) {
             return;
         }
         if(isOk == 1){

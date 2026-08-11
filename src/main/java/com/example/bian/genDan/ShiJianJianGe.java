@@ -26,7 +26,7 @@ public class ShiJianJianGe {
 
         args = new String[2];
         PrivateConfig.printLog("开始啦");
-        args[0] = "E://code//biance";
+        args[0] = "E://code//benDi";
         args[1] = "0-genDan";
         PrivateConfig.before(args[0], args[1]);
 
@@ -40,7 +40,7 @@ public class ShiJianJianGe {
 
     }
     static String genDan_portfolioId = null;
-    static boolean 只统计钱 = true;
+    static boolean 只统计钱 = false;
 
     public static void method() throws InterruptedException, ParseException {
         ThreadPoolExecutor threadPoolExecutor =
@@ -53,8 +53,7 @@ public class ShiJianJianGe {
         List<String> list = new ArrayList<String>(Arrays.asList(
 
 
-                "4751838302089254401",
-                "4939006395945705729"
+                "4734274187381923585"
 
 
 
@@ -80,7 +79,7 @@ public class ShiJianJianGe {
                 System.out.println("小于30分钟的单子占有率：" + (double) count / tradeSet.size());
             }
 
-            if(true) {
+            if(false) {
 
                 //查看下单数
                 JSONArray all = new JSONArray();
@@ -390,7 +389,7 @@ public class ShiJianJianGe {
 
     public static JSONArray getOrders(ThreadPoolExecutor threadPoolExecutor) throws InterruptedException {
         JSONArray all = new JSONArray();
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 10; i++) {
             String s = getOrder(threadPoolExecutor, i, 50);
             if (StringUtils.isNotBlank(s)) {
                 JSONObject jsonObject = JSON.parseObject(s);
