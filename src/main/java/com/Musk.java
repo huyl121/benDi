@@ -60,8 +60,8 @@ public class Musk {
 
         int isOk = 0; //0：币安，1：ok的概况，2：okd带单；3：聪明钱
         JSONArray jsonArray = new JSONArray();
-        getOp(jsonArray, "4788776444236355328", System.currentTimeMillis(), isOk);
-        BigDecimal beiShu = new BigDecimal("0.062");
+        getOp(jsonArray, "4512404768792222208", System.currentTimeMillis(), isOk);
+        BigDecimal beiShu = new BigDecimal("0.02");
         Map<String, BigDecimal> mapCount = new HashMap();
 
 
