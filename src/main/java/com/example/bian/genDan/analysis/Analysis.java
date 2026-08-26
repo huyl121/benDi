@@ -36,7 +36,7 @@ import static com.example.bian.client.bushu.PrivateConfig.*;
 public class Analysis {
 
     @SneakyThrows
-    public static void main(String args[]){
+    public static void main(String args[]) throws IOException, InterruptedException {
         args = new String[2];
         PrivateConfig.printLog("开始啦");
         args[0] = "E://code//biance";
