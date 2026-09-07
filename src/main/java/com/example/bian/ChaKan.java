@@ -13,13 +13,13 @@ public class ChaKan {
     public static void main(String[] args) {
         System.setProperty("https.proxySet", "true");
 		System.setProperty("https.proxyHost", "127.0.0.1");
-		System.setProperty("https.proxyPort", "10819");
+		System.setProperty("https.proxyPort", "10809");
         args = new String[1];
         System.out.println("开始啦");
         args[0] = "E://code//biance";
         PrivateConfig.before(args[0], "0");
         ChaKan postOrder = new ChaKan();
-        postOrder.method(PrivateConfig.genDans_personInfoList);
+        postOrder.method(PrivateConfig.personInfoList);
     }
 
     public void method( List<JSONObject> listPersonInfo ) {

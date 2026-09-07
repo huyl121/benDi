@@ -21,7 +21,7 @@ public class ChangeInitialLeverage {
     public static void main(String[] args) throws InterruptedException {
         System.setProperty("https.proxySet", "true");
 		System.setProperty("https.proxyHost", "127.0.0.1");
-		System.setProperty("https.proxyPort", "10819");
+		System.setProperty("https.proxyPort", "10809");
         ChangeInitialLeverage postOrder = new ChangeInitialLeverage();
 
 //        postOrder.method1();
@@ -32,7 +32,7 @@ public class ChangeInitialLeverage {
         PrivateConfig.before(args[0], "0");
         PrivateConfig.xsw(true);
         PrivateConfig.getListNew(args[0] + "//info.json");
-        postOrder.method(PrivateConfig.genDan_personInfoList);
+        postOrder.method(PrivateConfig.personInfoList);
 
 
     }
@@ -54,11 +54,38 @@ public class ChangeInitialLeverage {
                         Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) it.next();
                         symbol = entry.getKey();
                         syncRequestClient.changeInitialLeverage(entry.getKey(), entry.getValue());
+                        System.out.println("\"" + symbol + "\":" + entry.getValue() + ",");
                     }catch (BinanceApiException e) {
-                        System.out.println(symbol);
-                        System.out.println(e.getMessage());
+                        if(e.getMessage().contains("-4424")){
+                            String gangGan = e.getMessage().replace("[Executing] -4424: Current symbol leverage cannot exceed ", "").replace("x leverage.", "");
+                            System.out.println("\"" + symbol + "\":" + gangGan + ",");
+                        }else if(e.getMessage().contains("-4028")){
+                            try{
+                                syncRequestClient.changeInitialLeverage(symbol, 10);
+                                System.out.println("\"" + symbol + "\":" + 10 + ",");
+                            }catch (BinanceApiException e1) {
+                                if(e1.getMessage().contains("-4424")){
+                                    String gangGan = e1.getMessage().replace("[Executing] -4424: Current symbol leverage cannot exceed ", "").replace("x leverage.", "");
+                                    System.out.println("\"" + symbol + "\":" + gangGan + ",");
+                                }else if(e.getMessage().contains("-4028")){
+
+                                }
+                                else{
+                                    System.out.println(symbol);
+                                    System.out.println(e1.getMessage());
+                                }
+                            }
+
+                        } else if(e.getMessage().contains("-4141")
+                        || e.getMessage().contains("-1121")
+                        ){
+
+                        }else{
+                            System.out.println(symbol);
+                            System.out.println(e.getMessage());
+                        }
                     }
-                    Thread.sleep(100);
+                    Thread.sleep(10);
                 }
 
                 /*Iterator iterator = map.entrySet().iterator();
