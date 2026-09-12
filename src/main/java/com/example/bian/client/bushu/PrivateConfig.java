@@ -27,6 +27,9 @@ import com.example.bian.client.model.trade.Order;
 import com.example.bian.client.model.trade.Position;
 import com.example.bian.genDan.GetPositions;
 import com.example.bian.ok.GetOKPositions;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -284,7 +287,12 @@ public class PrivateConfig {
     public static List<JSONObject> biCoins_personInfoList = new ArrayList<>();
     public static List<JSONObject> ok_personInfoList = new ArrayList<>();
     public static Map<String, List<JSONObject>> biCoins_gendanMap = new HashMap<>();
-    public static ThreadPoolExecutor threadPoolExecutor;
+    public static ThreadPoolExecutor threadPoolExecutor =
+            new ThreadPoolExecutor(5, 5, 10,
+                    TimeUnit.SECONDS,
+                    new LinkedBlockingQueue<>(50),
+                    Executors.defaultThreadFactory(),
+                    new ThreadPoolExecutor.CallerRunsPolicy());
     public static Writer fileWriter;
     public static Writer fileWriterJianKong;
     public static String classPath;
@@ -303,6 +311,15 @@ public class PrivateConfig {
         getListNew(classPath + "//info.json");
 
 
+    }
+    public static final OkHttpClient HTTP_CLIENT = new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .build();
+    public static String getResponse(Request request) throws IOException {
+        try (Response response = PrivateConfig.HTTP_CLIENT.newCall(request).execute()) {
+            return response.body().string();
+        }
     }
 
     public static List<Order> getOrders(SyncRequestClient syncRequestClientTiansc, ThreadPoolExecutor threadPoolExecutor) throws InterruptedException {

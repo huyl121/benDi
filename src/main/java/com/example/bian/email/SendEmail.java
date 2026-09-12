@@ -50,8 +50,6 @@ public class SendEmail {
                 }else {
                     send(session, from, "381471618@qq.com", body, head);
                     Thread.sleep(2000);
-                    send(session, from, "343316073@qq.com", body, head);
-                    Thread.sleep(2000);
                     send(session, from, "1028761565@qq.com", body, head);
                     Thread.sleep(2000);
                     send(session, from, "805385922@qq.com", body, head);

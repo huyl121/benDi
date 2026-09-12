@@ -28,7 +28,7 @@ public class Musk {
     public static void main(String[] args) throws InterruptedException, IOException {
         System.setProperty("https.proxySet", "true");
         System.setProperty("https.proxyHost", "127.0.0.1");
-        System.setProperty("https.proxyPort", "10819");
+        System.setProperty("https.proxyPort", "10809");
 
 
         args = new String[2];
@@ -58,10 +58,10 @@ public class Musk {
         map.put("ZENUSDT",	0.7	);*/
 
 
-        int isOk = 0; //0：币安，1：ok的概况，2：okd带单；3：聪明钱
+        int isOk = 3; //0：币安，1：ok的概况，2：okd带单；3：聪明钱
         JSONArray jsonArray = new JSONArray();
-        getOp(jsonArray, "4512404768792222208", System.currentTimeMillis(), isOk);
-        BigDecimal beiShu = new BigDecimal("0.02");
+        getOp(jsonArray, "4623131157906423297", System.currentTimeMillis(), isOk, 1);
+        BigDecimal beiShu = new BigDecimal("0.00074");
         Map<String, BigDecimal> mapCount = new HashMap();
 
 
@@ -153,7 +153,7 @@ public class Musk {
         System.out.println(chengGong / zongShu);
     }
 
-    public static void getOp(JSONArray list, String portfolioId, Long currentTime, int isOk) throws IOException, InterruptedException {
+    public static void getOp(JSONArray list, String portfolioId, Long currentTime, int isOk, int page) throws IOException, InterruptedException {
         if (list.size() > 99) {
             return;
         }
@@ -202,7 +202,7 @@ public class Musk {
                         list.addAll(jsonArray);
                         JSONObject jsonObject1 = (JSONObject) jsonArray.get(jsonArray.size() - 1);
                         Thread.sleep(1000);
-                        getOp(list, portfolioId, jsonObject1.getLong("fillTime"), isOk);
+                        getOp(list, portfolioId, jsonObject1.getLong("fillTime"), isOk, 1);
                     }
                 }
             }
@@ -254,7 +254,7 @@ public class Musk {
                         list.addAll(jsonArray);
                         JSONObject jsonObject1 = (JSONObject) jsonArray.get(jsonArray.size() - 1);
                         Thread.sleep(1000);
-                        getOp(list, portfolioId, jsonObject1.getLong("id"), isOk);
+                        getOp(list, portfolioId, jsonObject1.getLong("id"), isOk, 1);
                     }
                 }
             }
@@ -264,7 +264,7 @@ public class Musk {
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType, "");
             Request request = new Request.Builder()
-                    .url("https://www.bmwweb.solutions/bapi/asset/v1/private/future/smart-money/profile/query-order-history?rows=50&topTraderId=4988811260243579393&marketType=UM&page=1")
+                    .url("https://www.bmwweb.solutions/bapi/asset/v1/private/future/smart-money/profile/query-order-history?rows=50&topTraderId=" + portfolioId + "&marketType=UM&page=" + page)
 //                    .method("GET", body)
                     .addHeader("accept", "*/*")
                     .addHeader("accept-language", "zh-CN,zh;q=0.9,en;q=0.8")
@@ -302,7 +302,8 @@ public class Musk {
                                 .collect(JSONArray::new, JSONArray::add, JSONArray::addAll));
                         JSONObject jsonObject1 = (JSONObject) jsonArray.get(jsonArray.size() - 1);
                         Thread.sleep(1000);
-                        getOp(list, portfolioId, jsonObject1.getLong("id"), isOk);
+                        page++;
+                        getOp(list, portfolioId, jsonObject1.getLong("id"), isOk, page);
                     }
                 }
             }
@@ -354,7 +355,7 @@ public class Musk {
                         list.addAll(jsonArray);
                         JSONObject jsonObject1 = (JSONObject) jsonArray.get(jsonArray.size() - 1);
                         Thread.sleep(5000);
-                        getOp(list, portfolioId, jsonObject1.getLong("orderTime"), isOk);
+                        getOp(list, portfolioId, jsonObject1.getLong("orderTime"), isOk, 1);
                     }
                 }
             }

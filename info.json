@@ -6,7 +6,7 @@
 	"daiLi": "1",
 	"ceShi": "1",
 	"linux": "0",
-	"shiJian": "10000",
+	"shiJian": "500",
 	"changeInitialLeverage": "1",
 	"Leverage4164": "ETHUSDT,BTCUSDT",
 	"LeverageCount4164": 40,
@@ -67,9 +67,9 @@
 		"xianYou": [],
 		"genPortfolioId": "4751838302089254401",
 		"money": "500",
-		"position": "3",
-		"token": "6b54f6d2c27cbeab572580c91a9f78f6",
-		"cookie": "bnc-uuid=45148178-3a2d-496b-bcbb-d56b945ceb5b; OptanonAlertBoxClosed=2026-06-26T04:50:49.170Z; se_gd=wUaDwUw8VAACB4IgVAwQgZZUAUxBQBWUVEK5cV0BlNQVwFlNWWoV1; se_gsd=VTQiL0Z+JSMiFlo1JhM2FTYEFVBTAQRXVFpFV11WW1NWElNT1; _gcl_au=1.1.23246259.1782449460; BNC_FV_KEY=33da57b6bb31aa58b6f5c2ab17bf3a3c11494fe1; BNC-Location=CN; changeBasisTimeZone=; futures-layout=pro; userPreferredCurrency=USD_USD; aws-waf-token=97f7e235-6437-4e80-97e0-67aae20535f3:BgoApVkcxUwBAAAA:UvqcbjJtFSgCcUQKpYWy/l87IGl6U2W21EcfoMpQMou+puo2Q50PhuLg6Ha2brHHDnAJOm29DfYyDgh2M+CscIdCvJF7VHG6mjrEqDIyJVhWRRqWITp8KCZXWJtv/+f+75fPSOZat4TyIH0RplIgJg2tODA9vH8NVMh5CaFjADZq2e2Qphvh8cCkmaUbq+mI6adRtdJzDiRr2Axi7XvwGDsXOloki9cDoj2Em92p2Wt7AjRi2XVyME2LaeneBB0Uj7CxT6au9nSX; BNC_FV_KEY_T=101-hKZ4JOjJ3G2SzZJR6RjHfBzsi3enEJvnHcz5n7snlEIdYy7w2695szsVDChcV%2BQsBEfgLedHwrvUXGBnx4xwsw%3D%3D-asECTM2a2OPzym%2Fx6xloSw%3D%3D-cd; BNC_FV_KEY_EXPIRE=1786274644822; _gid=GA1.2.206897043.1786253047; g_state={\"i_l\":0,\"i_ll\":1786253056700,\"i_b\":\"T/9V3MAlzUnFGU4Z32rO+RpMCSSyE2rIoV+HaSiBCMk\",\"i_e\":{\"enable_itp_optimization\":24},\"i_et\":1786253056700}; r20t=web.1050893068.FE9FFB1F7894DC49FDAFAF6269A7C70C; r30t=1; cr00=AE3DDD9D9322A113FE8B8132047E6FDC; d1og=web.1050893068.AFDF8A5D4AC55B94514BC555719FFC6B; r2o1=web.1050893068.928C7D54BAAD0E9F4AB0F5D332B149C2; f30l=web.1050893068.84CF23DB4398D0E2A1EEB12DB98B8DEE; currentAccount=; logined=y; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221050893068%22%2C%22first_id%22%3A%2219f02442c228b8-027a46a7938f58a-5c123e18-2073600-19f02442c2370d%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTlmMDI0NDJjMjI4YjgtMDI3YTQ2YTc5MzhmNThhLTVjMTIzZTE4LTIwNzM2MDAtMTlmMDI0NDJjMjM3MGQiLCIkaWRlbnRpdHlfbG9naW5faWQiOiIxMDUwODkzMDY4In0%3D%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%221050893068%22%7D%7D; theme=dark; p20t=web.1050893068.004C44E30E3704DAFD8BD1045E4C1887; OptanonConsent=isGpcEnabled=0&datestamp=Sun+Aug+09+2026+13%3A59%3A19+GMT%2B0800+(%E4%B8%AD%E5%9B%BD%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4)&version=202604.2.0&browserGpcFlag=0&isDntEnabled=0&isIABGlobal=false&hosts=&consentId=705ab1a5-3011-41d0-9ea9-69348b21c8f9&interactionCount=1&isAnonUser=1&prevHadToken=0&landingPath=NotLandingPage&groups=C0001%3A1%2CC0003%3A1%2CC0004%3A1%2CC0002%3A1&fclco=&lastConsentTs=1782449449&intType=1&geolocation=JP%3B13&AwaitingReconsent=false; _uetsid=a1f010a093b211f1bd265dbf2da5b871; _uetvid=a169c580711a11f19ccd138f7f41a226; _ga=GA1.2.1835257401.1782449461; _ga_3WP50LGEEC=GS2.1.s1786252986$o69$g1$t1786255274$j6$l0$h0",
+		"position": "1",
+		"token": "app.1050893068.D5B2EF17CB09D3D9EAEA808DEA1280A6",
+		"cookie": "bnc-uuid=45148178-3a2d-496b-bcbb-d56b945ceb5b; OptanonAlertBoxClosed=2026-06-26T04:50:49.170Z; se_gd=wUaDwUw8VAACB4IgVAwQgZZUAUxBQBWUVEK5cV0BlNQVwFlNWWoV1; se_gsd=VTQiL0Z+JSMiFlo1JhM2FTYEFVBTAQRXVFpFV11WW1NWElNT1; BNC_FV_KEY=33da57b6bb31aa58b6f5c2ab17bf3a3c11494fe1; changeBasisTimeZone=; userPreferredCurrency=USD_USD; _gcl_au=1.1.23246259.1782449460.717634269.1786414231.1786414231.115336707.1786414231.1786414231; futures-layout=pro; currentAccount=; lang=zh-CN; BNC-Location=; logined=y; g_state={\"i_l\":0,\"i_ll\":1788763980536,\"i_b\":\"4kcU6ealcWxC72EfqP6mrLNJmo8DOzzAH4dmyef+aq0\",\"i_e\":{\"enable_itp_optimization\":24},\"i_et\":1788763980536}; r20t=web.1050893068.F846511075BCB956C21463CD4783288D; r30t=1; cr00=AA8A60DDD0147148320EEAE291C59338; d1og=web.1050893068.DC5BD30CC88963E3D4E2C5F7CC2C3C38; r2o1=web.1050893068.B25FB63B43CD635B7053D42434B6E947; f30l=web.1050893068.655346A604CE6119F34A2C52CC2C907C; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221050893068%22%2C%22first_id%22%3A%2219f02442c228b8-027a46a7938f58a-5c123e18-2073600-19f02442c2370d%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMTlmMDI0NDJjMjI4YjgtMDI3YTQ2YTc5MzhmNThhLTVjMTIzZTE4LTIwNzM2MDAtMTlmMDI0NDJjMjM3MGQiLCIkaWRlbnRpdHlfbG9naW5faWQiOiIxMDUwODkzMDY4In0%3D%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%221050893068%22%7D%7D; aws-waf-token=0ec667a2-8c2d-4418-b64d-e10b5e38f54d:AQoAof4kM/xCAAAA:96NbkZfJc7O2TlIV1ZLK5s0U59sq34hvR8OO5v8nnEvij666SBwgul8TTiCOmid+Hv46pIrc4K3eK+bZ90Tr1W/OCt3cQt+3NINr3GWCrIkq0ZjWBOe7bfwbz70KLC2RONznw5W8S/NLm9c7JcPSYuTZV2S2K/ty9UEDe62fgS43L7Y31SER/0sufnSudN3pCeJgY43nDBHSO+cKjEBqArMO3y9rfHDzerQtt07nmAPY7tqrY3gdtbEhUz7Rhr3663TWKZs=; _gid=GA1.2.3020852.1789017241; BNC_FV_KEY_T=101-%2F4B5sJIPaxgCmM%2BnAqBBNGd%2F7pEov8aGZFzMpeIzoZA0WsBWpBraqDhf0sRMndwTuR6lj5xMmYQXH4qljiPgyQ%3D%3D-HJYs5LhVGvvQpNBk9KcmBQ%3D%3D-4f; BNC_FV_KEY_EXPIRE=1789118659129; theme=dark; p20t=web.1050893068.BC5ACEA0C02EAFCCCEC45E4CBE8558A4; OptanonConsent=isGpcEnabled=0&datestamp=Fri+Sep+11+2026+14%3A05%3A15+GMT%2B0800+(%E4%B8%AD%E5%9B%BD%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4)&version=202604.2.0&browserGpcFlag=0&isDntEnabled=0&isIABGlobal=false&hosts=&consentId=705ab1a5-3011-41d0-9ea9-69348b21c8f9&interactionCount=1&isAnonUser=1&prevHadToken=0&landingPath=NotLandingPage&groups=C0001%3A1%2CC0003%3A1%2CC0004%3A1%2CC0002%3A1&fclco=&lastConsentTs=1782449449&intType=1&geolocation=JP%3B13&AwaitingReconsent=false; _uetsid=70bdd680acd611f1bcf11982b8eedf68; _uetvid=a169c580711a11f19ccd138f7f41a226; _ga=GA1.2.1835257401.1782449461; _ga_3WP50LGEEC=GS2.1.s1789106414$o172$g1$t1789106778$j58$l0$h0"
 	},
 	"daiDanOk": {
 		"isDaiDanOk": "0",
@@ -275,9 +275,9 @@
 	"zhiSunTime": 300000000,
 	"port": 10819,
 	"zhengQian": {
-		"portfolioId": "5131925334830383361",
+		"portfolioId": "5198922466846524929",
 		"shui": "星辰社区-海",
-		"investAmount": 200,
+		"investAmount": 10,
 		"copyModel": "FIXED_RATIO",
 		"inviteCode": "zTlQFntv",
 		"定比": "FIXED_RATIO",
