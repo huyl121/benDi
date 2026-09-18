@@ -139,7 +139,7 @@ public class GenDanZhengQian {
                     "\t\"marginMode\": \"FOLLOW_LEAD\",\n" +
                     "\t\"investAsset\": \"USDT\",\n" +
                     "\t\"mirrorMode\": \"NONE\",\n" +
-                    "\t\"totalStopLossUsdt\": 0,\n" +
+                    "\t\"totalStopLossUsdt\": 1,\n" +
                     "\t\"followNewSymbols\": false,\n" +
                     "\t\"canTradFi\": false,\n" +
                     "\t\"slippage\": 0.001,\n" +
