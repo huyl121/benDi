@@ -30,8 +30,8 @@ public class BianApplication {
 
         if(args.length==0){
             args = new String[3];
-            args[0] = "E:/code/biance";
-            args[1] = "GenDanZhengQian";
+            args[0] = "E:/code/benDi";
+            args[1] = "bianGenDanNew";
             args[2] = "a10000000";
         }
 
@@ -40,7 +40,7 @@ public class BianApplication {
             PrivateConfig.printLog("开代理");
             System.setProperty("https.proxySet", "true");
             System.setProperty("https.proxyHost", "127.0.0.1");
-            System.setProperty("https.proxyPort", "10819");
+            System.setProperty("https.proxyPort", "10809");
         }
 
 
@@ -295,6 +295,12 @@ public class BianApplication {
 
 
         if ("bianGenDanNew".equals(args[1])) {
+            if(PrivateConfig.daiLi.equals("1")) {
+                System.out.println("开代理");
+                System.setProperty("https.proxySet", "true");
+                System.setProperty("https.proxyHost", "127.0.0.1");
+                System.setProperty("https.proxyPort", PrivateConfig.port);
+            }
             System.out.println("只获取订单");
             HuoQuDingDan huoQuDingDan = new HuoQuDingDan();
             huoQuDingDan.method();

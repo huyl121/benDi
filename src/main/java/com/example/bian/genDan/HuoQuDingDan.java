@@ -9,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 
+import static com.example.bian.client.bushu.PrivateConfig.*;
+
 public class HuoQuDingDan {
 
     public static void main(String[] args) throws IOException {
@@ -18,7 +20,7 @@ public class HuoQuDingDan {
 
 
         args = new String[2];
-        args[0] = "E://code//biance";
+        args[0] = "E://code//benDi";
         args[1] = "0-genDan";
         PrivateConfig.before(args[0], args[1]);
 
@@ -41,28 +43,39 @@ public class HuoQuDingDan {
         while (true){
             i++;
             try{
-                String s = GetPositions.getPosition(PrivateConfig.genDan_genPortfolioId);
-                if (StringUtils.isNotBlank(s)) {
-//                System.out.println(s);
-                    JSONObject jsonObject = JSON.parseObject(s);
-                    if ("000000".equals(jsonObject.getString("code")) && jsonObject.getBoolean("success")) {
-                        if (i>10) {
-                            i=0;
-                            System.out.println(jsonObject.toJSONString());
-                            System.out.println(PrivateConfig.getCurrentTime());
-                        }
-
-                        if(CollectionUtils.isEmpty(jsonObject.getJSONArray("data"))){
-                            smail++;
-                            if(smail > 3){
-                                return;
+                for (Object o : genDans_genPortfolioIds) {
+                    JSONObject genPortfolio = (JSONObject) o;
+                    String genPortfolioId = genPortfolio.getString("genPortfolioId");
+                    String name = genPortfolio.getString("name");
+                    String s = GetPositions.getPosition(genPortfolioId);
+                    if (StringUtils.isNotBlank(s)) {
+                        JSONObject jsonObject = JSON.parseObject(s);
+                        if ("000000".equals(jsonObject.getString("code")) && jsonObject.getBoolean("success")) {
+                            if (i > 10) {
+                                System.out.println(jsonObject.toJSONString());
+                                System.out.println(name + PrivateConfig.getCurrentTime());
                             }
-                            T5.searchAll("老师空仓了，抓紧联系胡亚龙");
+
+                            if (CollectionUtils.isEmpty(jsonObject.getJSONArray("data"))) {
+                                smail++;
+                                if (smail > 3) {
+                                    return;
+                                }
+                                T5.searchAll(name + "：老师空仓了，抓紧联系胡亚龙");
+                            }
+                        } else {
+                            PrivateConfig.printLog("订单失败，连续5次，有问题！1");
+                            T5.searchAll("订单失败，连续5次，有问题！3");
                         }
-                    } else {
-                        PrivateConfig.printLog("订单失败，连续5次，有问题！1");
-                        T5.searchAll("订单失败，连续5次，有问题！3");
                     }
+                    try {
+                        Thread.sleep(1000*60);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                if (i > 10) {
+                    i = 0;
                 }
 
             }catch (IOException e){
@@ -80,12 +93,7 @@ public class HuoQuDingDan {
                     throw new RuntimeException(e1);
                 }
             }
-            try {
-//                Thread.sleep(1000*60*10);
-                Thread.sleep(1000*10);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+
         }
     }
 
