@@ -190,6 +190,7 @@ public class PrivateConfig {
     public static  String biCoin_token = "1";
     public static  String biCoin_time2 = "1";
     public static  String biCoin_time3 = "1";
+    public static String errorInfo = "";
     public static  String biCoinTogether = "0";
     public static  String biCoinremove = "";//移除后，启动就能跟单了
     public static  String biCoins_isBiCoins = "0";

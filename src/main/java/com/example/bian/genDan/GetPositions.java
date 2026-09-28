@@ -13,8 +13,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.concurrent.*;
 
-import static com.example.bian.client.bushu.PrivateConfig.getPon;
-import static com.example.bian.client.bushu.PrivateConfig.ling;
+import static com.example.bian.client.bushu.PrivateConfig.*;
 
 public class GetPositions {
 
@@ -33,7 +32,7 @@ public class GetPositions {
         System.out.println("开代理");
         System.setProperty("https.proxySet", "true");
         System.setProperty("https.proxyHost", "127.0.0.1");
-        System.setProperty("https.proxyPort", "10819");
+        System.setProperty("https.proxyPort", "10809");
 
 
         PrivateConfig.getJGXsw();
@@ -48,7 +47,7 @@ public class GetPositions {
         PrivateConfig.threadPoolExecutor = threadPoolExecutor;
 
 //        getPosition("4777921357644221697");
-        System.out.println(getOrders(threadPoolExecutor, "4918666677208285440"));
+        System.out.println(getOrders(threadPoolExecutor, "5204786774544075008"));
 
 
     }
@@ -70,12 +69,30 @@ public class GetPositions {
                     T5.searchAll("抓紧联系我2，" + jsonObject.getString("message"));
                     Thread.sleep(1000 * 60);
                 }else {
-                    PrivateConfig.printLog(jsonObject.getString("message"));
-                    T5.searchAll("抓紧联系我3，" + jsonObject.getString("message"));
+                    String msg = jsonObject.getString("message");
+                    PrivateConfig.printLog(msg);
+                    T5.searchAll("抓紧联系我3，" + msg);
+
+                    if (msg != null && msg.contains("请求过于频繁")) {
+                        shiJian = String.valueOf(Integer.parseInt(shiJian) + 500);
+                        PrivateConfig.printLog("请求时间增加到：" + shiJian);
+                    }else {
+                        if (msg != null) {
+                            String[] errors = errorInfo.split(",");
+                            for(String error : errors){
+                                if (msg.contains(error)) {
+                                    shiJian = String.valueOf(Integer.parseInt(shiJian) + 500);
+                                    PrivateConfig.printLog("请求时间增加到：" + shiJian);
+                                }
+                            }
+                        }
+                    }
+
                     Thread.sleep(1000 * 60);
                 }
+            } else {
+                Thread.sleep(1000 * 60);
             }
-            Thread.sleep(1000 * 60);
         }
         PrivateConfig.printLog("币安跟单-获取订单有问题了1");
         return null;
@@ -130,56 +147,12 @@ public class GetPositions {
     }
 
     public static String getPosition(String genPortfolioId) throws IOException, InterruptedException {
-
         if (PrivateConfig.genDan_position.equals("0")) {
-//            System.out.println("获取id：" + PrivateConfig.genDan_genPortfolioId);
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType, "{\"portfolioId\":\" " + genPortfolioId + "\",\"copyTradeType\":\"COPY\"}");
-            /*if("1".equals(PrivateConfig.ceShi)){
-                System.out.println(PrivateConfig.genDan_token);
-            }*/
             return PostGet.postPhone(body, "https://www.binance.com/bapi/futures/v6/private/future/user-data/user-position");
-            /*Request request = new Request.Builder()
-                    .url("https://www.binance.com/bapi/futures/v6/private/future/user-data/user-position")
-                    .method("POST", body)
-                    .addHeader("Host", "www.binance.com")
-                    .addHeader("x-token", PrivateConfig.genDan_token)
-                    .addHeader("bnc-req-src", "native")
-                    .addHeader("clienttype", "android")
-                    .addHeader("x-trace-id", "android_d7850d5c-6ec0-45de-83a2-449f9a0ff3af")
-                    .addHeader("fvideo-id", "2328e05fa9f2a07581f36886824c433bb98e40fe")
-                    .addHeader("fvideo-token", "IuNC8r7N/hWNE6pCi8uDHozvcZunn+THMykKUV2F4RTDHgTlg3W9o/B8J8tynyK2Pt/a4a90nf7G9E8MQw58FuVFvRpZ9m2Z5KY2uTdsN0+Wr+mjGMJWpjoZg7kzD2lG3CmhTUZWkPET35CriQwldOG4PbGdnIGVzeXtHrrLbPtPe6F0zmELVsHfVi3NvPq/A=76")
-                    .addHeader("lang", "zh-CN")
-                    .addHeader("versioncode", "29202")
-                    .addHeader("versionname", "2.92.2")
-                    .addHeader("isnight", "false")
-                    .addHeader("bnc-app-mode", "pro")
-                    .addHeader("bnc-uuid", "850ec9079879179b6eec1707dfe13c8e")
-                    .addHeader("bnc-time-zone", "Asia/Shanghai")
-                    .addHeader("bnc-app-channel", "binance")
-                    .addHeader("bnc-app-id", "1")
-                    .addHeader("device-info", "eyJkZXZpY2VfaWQiOiIiLCJhX2Jvb3Rsb2FkZXIiOiJ1bmtub3duIiwiYV9icmFuZCI6IlhpYW9taSIsImFfY3B1X2FiaSI6Ilthcm02NC12OGEsIGFybWVhYmktdjdhLCBhcm1lYWJpXSIsImFfZGV2aWNlX2xvZ2luX25hbWUiOiJlbGlzaCIsImRldmljZV9uYW1lIjoiTTIxMDVLODFBQyIsImFfZGlzcGxheSI6IlRLUTEuMjIxMDEzLjAwMiB0ZXN0LWtleXMiLCJhX2ZpbmdlcnByaW50IjoiWGlhb21pL2VsaXNoL2VsaXNoOjEzL1RLUTEuMjIxMDEzLjAwMi9WMTQuMC41LjAuVEtZQ05YTTp1c2VyL3JlbGVhc2Uta2V5cyIsImFfaG9zdCI6InBhbmd1LWJ1aWxkLWNvbXBvbmVudC1zeXN0ZW0tMTc2NzQ0LTBsbnM2LWZ3d25mLWs2djZ4IiwiYV9kZXZpY2VfdmVyc2lvbl9pZCI6IlRLUTEuMjIxMDEzLjAwMiIsImFfcHJvZHVjdCI6ImVsaXNoIiwiYV9zY3JlZW5IZWlnaHQiOiIyNTI0IiwiYV9zY3JlZW5XaWR0aCI6IjE2MDAiLCJhX3NkayI6IjMzIiwiYV9idWlsZF90aW1lIjoiMTY5NTE3NTM0NzAwMCIsImFfdXNlciI6ImJ1aWxkZXIiLCJicmFuZF9tb2RlbCI6IlhpYW9taU0yMTA1SzgxQUMiLCJhX2FwcF9pbnN0YWxsX2RhdGUiOiIxNzMwNjM4NzM0MTM5IiwianVkZ2Vfcm9vdCI6MCwic2NyZWVuX3Jlc29sdXRpb24iOiIxNjAwKjI1MjQiLCJzeXN0ZW1fbGFuZyI6InpoLUNOIiwic3lzdGVtX3ZlcnNpb24iOiIzMyIsInRpbWV6b25lIjoiR01UKzA4MDAifQ==")
-                    .addHeader("mclient-x-tag", "Z73vs0d3eu67rDqMCbSH")
-                    .addHeader("bnc-location", "BINANCE")
-                    .addHeader("bnc-currency", "CNY")
-                    .addHeader("referer", "https://www.binance.com/")
-                    .addHeader("x-seccheck-sig", "a1.5.4#rAAAACgAAAByAAAAcwAAAGicDX_5LHH31d6-qCwIDxZqJ5lZz3-swk5quRJsQb02LcwiMKU6cG0oUzKNVT77tm_FkbvzQIhfulMU5mrlOBdHy4mdbyd0MSTuiOoVXTYW1idRIpOX9Y9-ygGxT41yJp6ugql1P967ve31u3CRqvwnunJzKkR_C0w0FnOUkYd3wNv9eBCO8IgdUfcx8XInYWpF0L9UYkwrW2vHfWNnJhUzRd4Ua4wzcTpYaQms2PGPomKZu-GDaUc2O6rwZGna17-Z75SCvHHyHWx413Cym0Q1EVJO")
-                    .addHeader("x-seccheck-token", "a1.5.4#rAIAAGgBAAByAAAAwwAAAKPs68HMOB4q6WYIhIHehw3AZ37oizyinQCM1T7DIHMWTqSCm9vIFXPBZ0zW7PWjo_urBiUjWAkP9y4Sd-g2ZLFDI7D-Ay8258TQQZGOI3DiQ8xrDNKoJpKeMGNZe56NGobthfePTqbpSO-qwpcrhE51AHLcLtXIpiuL_VwZO_JgDnHkMVlC2X0yotuTR0-5OhR6OsPNb38pFgODEbOG3W4I5TeK4hvrkmRYpkqUGBCdchanWMTrwIzWG46Y9OTqcdx-P8Md6UAfTTzWaPAT0fi0rrymESDx7kohmTNMOAvfZIv0f5Yf3Zk_1Mq_8lKte01Kl_ED1rJyBFzE2Mn07AYapO7nNDPRSbTIdORezud0ZBB5hRfxhUXB6gl77vOt6JAtKZYMpiz1QBU-DNMJFsD01JFzc0tGpoFbsBUr79R3CPa-BxbGqUh4pD3RW7cIzVVR4xWfRruE4MAOOc7ymJzUnGX_67H41mgVxY91ilZ5nEIq-gbBdZdQCOAeS_RxjdtqIJH-6mrKSmGosoNq8jGizsZLFRAeC38MVsIGtbDlUj0YW1roArd4jMOykTp0ImSMS4bmBcmNMWmxx7D14HpmtFJoRdusxiKcvSmyuu7upXjg8iKKm4aZ2ewj0E366zshYsGFF3MGFi75OuppErXE_5n47q9VQjuP9VyXGvP1TW6jTJuyHwz7tgK9jRWljtCtW0jG3A-E9itY9-HCWjL5sBGX1ZRu2EcOxqk3kUNzlD0YPVM42Rwm80Vc8SDCoXC_PTMy_5HXpUQgKHb2wnOAgc0yNrxwKmFYt6P80CvODQzz-44w8T1OjlA-qFRpUBmkOhQxKXb_lHZyQ5t2283cwbEdXCvNQQ9ucs7y-R73W3xJ-7IMIq456cY2DxHn3jhi4NwrwU5dnGdB0KyWknQXbwHzMmylXKl_i6CbmiziOWLFrWKd-HBNpngx_i5hkO5Zxd4v0P9ex7bEZhDx5_ul66Mg8emhtCEYXnnDVJUG4NM6LKoDaaXtWzraf2BVB_r1OwVQJv9PedRqof1R0JTxIdRDa1HxWm_d90VgRJ-rUGtlkg#55922C1A")
-                    .addHeader("bnc-cpk", "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAERHCIrq8ochHqaQ5iPa/Q6itIt3wJmf3CDC5w9vTBVpqszoVnHrtUva1RK2ouYMvZxFoymvyfNW8ajQHc6Ae2Fg==")
-                    .addHeader("content-type", "application/json")
-                    .addHeader("user-agent", "okhttp/4.12.0")
-                    .build();
-            Response response = client.newCall(request).execute();
-
-            *//*if(PrivateConfig.ceShi.equals("1")){
-                System.out.println("获取成功了");
-            }*//*
-            return response.body().string();*/
 
         } else if (PrivateConfig.genDan_position.equals("2")) {
-            OkHttpClient client = new OkHttpClient().newBuilder()
-                    .build();
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType, "{\"copyTradeType\":\"COPY\",\"portfolioId\":\"" + genPortfolioId + "\"}");
             Request request = new Request.Builder()
@@ -211,12 +184,90 @@ public class GetPositions {
                     .addHeader("x-trace-id", "679352f7-75e9-4f9e-9c21-b71b85e0d71b")
                     .addHeader("x-ui-request-trace", "679352f7-75e9-4f9e-9c21-b71b85e0d71b")
                     .build();
-            Response response = client.newCall(request).execute();
-
-            return response.body().string();
-        }else if (PrivateConfig.genDan_position.equals("3")) {
-            OkHttpClient client = new OkHttpClient().newBuilder()
+            return getResponse(request);
+        }else if (PrivateConfig.genDan_position.equals("4")) {
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, "{\"copyTradeType\":\"COPY\",\"portfolioId\":\"" + genPortfolioId + "\"}");
+            Request request = new Request.Builder()
+                    .url("https://www.bnappweb.black/bapi/futures/v6/private/future/user-data/user-position")
+                    .method("POST", body)
+                    .addHeader("Host", "www.bnappweb.black")
+                    .addHeader("Cookie", "lang=zh-CN; theme=light; userPreferredCurrency=CNY_USD; color=fresh; changeBasisTimeZone=; isRedUpGreenDown=false; cr00=x-desktop-token; aws-waf-token=ae76868e-14a7-4808-b348-ecfd43a2441a:AQoAk04sEMEqAAAA:EnA0AzixhgeMAgAg3+6GWQ6IMyNInEGBoJ/flXgyUOo3dbhuNGH4kwP98/XAYeArS0ldk4sLQXcJx2xRCc8giVD5ZRLeLwJcgMRLAdavQKVfRUVWTxiwycMjfLSQzKYpnNqVFD86zlvzTffcEcesbsvAI9ZSGFmJJlY89GHv3p0Gc3Khw8QWXGVk5OCDx0b82J/6BtVAM0T7eiTM7gCHzfpIKfipZMbziLIcNiVj/nDDbuLScJyZgwo729uFegbcdIfovniDLm/xhDPw; bnc-uuid=ebc6c6b1-d58f-4dbc-af4b-e4bb596fa9ab; sajssdk_2015_cross_new_user=1; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221207218528%22%2C%22first_id%22%3A%221a0755eb34413c2-0593117cf1e214c-4267616e-2073600-1a0755eb34515c4%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMWEwNzU1ZWIzNDQxM2MyLTA1OTMxMTdjZjFlMjE0Yy00MjY3NjE2ZS0yMDczNjAwLTFhMDc1NWViMzQ1MTVjNCIsIiRpZGVudGl0eV9sb2dpbl9pZCI6IjEyMDcyMTg1MjgifQ%3D%3D%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%221207218528%22%7D%7D; BNC_FV_KEY=3324d43d56b1a8a3b515ab3c37abd509cc28de29; BNC_FV_KEY_T=101-nHYb%2BErpJnMVccYUns4VhKFQKrllUnCz%2FI7mICCydHzLDeB5umMX%2FnmX4Cmphy2PTTRT59J6YITtVZI4U6u12Q%3D%3D-xWXK1xE6ZpNP31KNyOzRxg%3D%3D-1a; BNC_FV_KEY_EXPIRE=1788697175292")
+                    .addHeader("accept", "*/*")
+                    .addHeader("accept-language", "zh-CN")
+                    .addHeader("bnc-location", "CN")
+                    .addHeader("bnc-time-zone", "Asia/Shanghai")
+                    .addHeader("bnc-uuid", "ebc6c6b1-d58f-4dbc-af4b-e4bb596fa9ab")
+                    .addHeader("content-type", "application/json")
+                    .addHeader("fvideo-id", "3324d43d56b1a8a3b515ab3c37abd509cc28de29")
+                    .addHeader("fvideo-token", "UoGr6vsNt5Ovq7W5rxhtY5UlciTsvgdG1vPfrNbK2169DifllMdtsHNChPkuLqy4ltAieeudswxEwvGK6lF1Jb+iUsqhgyJvzjDmwH664LrPb0vNaVlNoXWUlOoHshprHahuI2GyHzlmBnSosMoAKZbCDeSkkmQn0WhKZPo3AHXAk8M9iSJ/SPPj5oJgAsxfc=3c")
+                    .addHeader("origin", "https://www.bnappweb.black")
+                    .addHeader("referer", "https://www.bnappweb.black/zh-CN/copy-trading/copy-management")
+                    .addHeader("sec-fetch-dest", "empty")
+                    .addHeader("sec-fetch-mode", "cors")
+                    .addHeader("sec-fetch-site", "same-origin")
+                    .addHeader("user-agent", "Binance/2.0.0 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.186 Safari/537.36")
+                    .addHeader("x-passthrough-token", "")
+                    .addHeader("x-trace-id", "b3529f93-fcd3-434b-a9fc-7d44679964db")
+                    .addHeader("x-ui-request-trace", "b3529f93-fcd3-434b-a9fc-7d44679964db")
+                    .addHeader("baggage", "sentry-environment=prod,sentry-release=20260904-f447b856-8538,sentry-public_key=af78a307ddf943f1b2b9d61200bd034b,sentry-trace_id=a81c37f92b5744c09bffe1b13c9af14a")
+                    .addHeader("bnc-currency", "CNY")
+                    .addHeader("bnc-req-src", "webview")
+                    .addHeader("clienttype", "electron")
+                    .addHeader("csrftoken", "732701e3129b5da0fe10aac35f82163d")
+                    .addHeader("device-info", "eyJzY3JlZW5fcmVzb2x1dGlvbiI6IjE5MjAsMTA4MCIsImF2YWlsYWJsZV9zY3JlZW5fcmVzb2x1dGlvbiI6IjE5MjAsMTAzMiIsInN5c3RlbV92ZXJzaW9uIjoiV2luZG93cyAxMCIsImJyYW5kX21vZGVsIjoidW5rbm93biIsInN5c3RlbV9sYW5nIjoiemgtQ04iLCJ0aW1lem9uZSI6IkdNVCswODowMCIsInRpbWV6b25lT2Zmc2V0IjotNDgwLCJ1c2VyX2FnZW50IjoiQmluYW5jZS8yLjAuMCBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTI4LjAuNjYxMy4xODYgU2FmYXJpLzUzNy4zNiIsImxpc3RfcGx1Z2luIjoiUERGIFZpZXdlcixDaHJvbWUgUERGIFZpZXdlcixDaHJvbWl1bSBQREYgVmlld2VyLE1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIsV2ViS2l0IGJ1aWx0LWluIFBERiIsImNhbnZhc19jb2RlIjoiZjhlZWNlMjgiLCJ3ZWJnbF92ZW5kb3IiOiJHb29nbGUgSW5jLiAoQU1EKSIsIndlYmdsX3JlbmRlcmVyIjoiQU5HTEUgKEFNRCwgQU1EIFJhZGVvbihUTSkgR3JhcGhpY3MgKDB4MDAwMDE2MzgpIERpcmVjdDNEMTEgdnNfNV8wIHBzXzVfMCwgRDNEMTEpIiwiYXVkaW8iOiIxMjQuMDQzNDc1Mjc1MTYwNzQiLCJwbGF0Zm9ybSI6IldpbjMyIiwid2ViX3RpbWV6b25lIjoiQXNpYS9TaGFuZ2hhaSIsImRldmljZV9uYW1lIjoiQ2hyb21lIFYxMjguMC42NjEzLjE4NiAoV2luZG93cykiLCJmaW5nZXJwcmludCI6IjY0NDhhMjZhZGM2YTZhYTM5NjlhMjJmMTQ4OTc1MmRkIiwiZGV2aWNlX2lkIjoiIiwicmVsYXRlZF9kZXZpY2VfaWRzIjoiIn0=")
+                    .addHeader("lang", "zh-CN")
+                    .addHeader("sec-ch-ua", "\"Not;A=Brand\";v=\"24\", \"Chromium\";v=\"128\"")
+                    .addHeader("sec-ch-ua-mobile", "?0")
+                    .addHeader("sec-ch-ua-platform", "\"Windows\"")
+                    .addHeader("sentry-trace", "a81c37f92b5744c09bffe1b13c9af14a-a6fb712752cdfb79")
+                    .addHeader("versionname", "2.0.0")
+                    .addHeader("x-token", PrivateConfig.genDan_token)
+                    .addHeader("priority", "u=1, i")
                     .build();
+            return getResponse(request);
+        }else if (PrivateConfig.genDan_position.equals("8")) {
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, "{\"copyTradeType\":\"COPY\",\"portfolioId\":\"" + genPortfolioId + "\"}");
+            Request request = new Request.Builder()
+                    .url("https://www.bnappweb.black/bapi/futures/v6/private/future/user-data/user-position")
+                    .method("POST", body)
+                    .addHeader("Host", "www.bnappweb.black")
+                    .addHeader("Cookie", "lang=zh-CN; theme=light; userPreferredCurrency=CNY_USD; color=fresh; changeBasisTimeZone=; isRedUpGreenDown=false; cr00=x-desktop-token; aws-waf-token=ae76868e-14a7-4808-b348-ecfd43a2441a:AQoAk04sEMEqAAAA:EnA0AzixhgeMAgAg3+6GWQ6IMyNInEGBoJ/flXgyUOo3dbhuNGH4kwP98/XAYeArS0ldk4sLQXcJx2xRCc8giVD5ZRLeLwJcgMRLAdavQKVfRUVWTxiwycMjfLSQzKYpnNqVFD86zlvzTffcEcesbsvAI9ZSGFmJJlY89GHv3p0Gc3Khw8QWXGVk5OCDx0b82J/6BtVAM0T7eiTM7gCHzfpIKfipZMbziLIcNiVj/nDDbuLScJyZgwo729uFegbcdIfovniDLm/xhDPw; bnc-uuid=ebc6c6b1-d58f-4dbc-af4b-e4bb596fa9ab; sajssdk_2015_cross_new_user=1; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221207218528%22%2C%22first_id%22%3A%221a0755eb34413c2-0593117cf1e214c-4267616e-2073600-1a0755eb34515c4%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMWEwNzU1ZWIzNDQxM2MyLTA1OTMxMTdjZjFlMjE0Yy00MjY3NjE2ZS0yMDczNjAwLTFhMDc1NWViMzQ1MTVjNCIsIiRpZGVudGl0eV9sb2dpbl9pZCI6IjEyMDcyMTg1MjgifQ%3D%3D%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%221207218528%22%7D%7D; BNC_FV_KEY=3324d43d56b1a8a3b515ab3c37abd509cc28de29; BNC_FV_KEY_T=101-nHYb%2BErpJnMVccYUns4VhKFQKrllUnCz%2FI7mICCydHzLDeB5umMX%2FnmX4Cmphy2PTTRT59J6YITtVZI4U6u12Q%3D%3D-xWXK1xE6ZpNP31KNyOzRxg%3D%3D-1a; BNC_FV_KEY_EXPIRE=1788697175292")
+                    .addHeader("accept", "*/*")
+                    .addHeader("accept-language", "zh-CN")
+                    .addHeader("bnc-location", "CN")
+                    .addHeader("bnc-time-zone", "Asia/Shanghai")
+                    .addHeader("bnc-uuid", "ebc6c6b1-d58f-4dbc-af4b-e4bb596fa9ab")
+                    .addHeader("content-type", "application/json")
+                    .addHeader("fvideo-id", "3324d43d56b1a8a3b515ab3c37abd509cc28de29")
+                    .addHeader("fvideo-token", "UoGr6vsNt5Ovq7W5rxhtY5UlciTsvgdG1vPfrNbK2169DifllMdtsHNChPkuLqy4ltAieeudswxEwvGK6lF1Jb+iUsqhgyJvzjDmwH664LrPb0vNaVlNoXWUlOoHshprHahuI2GyHzlmBnSosMoAKZbCDeSkkmQn0WhKZPo3AHXAk8M9iSJ/SPPj5oJgAsxfc=3c")
+                    .addHeader("origin", "https://www.bnappweb.black")
+                    .addHeader("referer", "https://www.bnappweb.black/zh-CN/copy-trading/copy-management")
+                    .addHeader("sec-fetch-dest", "empty")
+                    .addHeader("sec-fetch-mode", "cors")
+                    .addHeader("sec-fetch-site", "same-origin")
+                    .addHeader("user-agent", "Binance/2.0.0 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.186 Safari/537.36")
+                    .addHeader("x-passthrough-token", "")
+                    .addHeader("x-trace-id", "b3529f93-fcd3-434b-a9fc-7d44679964db")
+                    .addHeader("x-ui-request-trace", "b3529f93-fcd3-434b-a9fc-7d44679964db")
+                    .addHeader("baggage", "sentry-environment=prod,sentry-release=20260904-f447b856-8538,sentry-public_key=af78a307ddf943f1b2b9d61200bd034b,sentry-trace_id=a81c37f92b5744c09bffe1b13c9af14a")
+                    .addHeader("bnc-currency", "CNY")
+                    .addHeader("bnc-req-src", "webview")
+                    .addHeader("clienttype", "electron")
+                    .addHeader("csrftoken", "732701e3129b5da0fe10aac35f82163d")
+                    .addHeader("device-info", "eyJzY3JlZW5fcmVzb2x1dGlvbiI6IjE5MjAsMTA4MCIsImF2YWlsYWJsZV9zY3JlZW5fcmVzb2x1dGlvbiI6IjE5MjAsMTAzMiIsInN5c3RlbV92ZXJzaW9uIjoiV2luZG93cyAxMCIsImJyYW5kX21vZGVsIjoidW5rbm93biIsInN5c3RlbV9sYW5nIjoiemgtQ04iLCJ0aW1lem9uZSI6IkdNVCswODowMCIsInRpbWV6b25lT2Zmc2V0IjotNDgwLCJ1c2VyX2FnZW50IjoiQmluYW5jZS8yLjAuMCBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTI4LjAuNjYxMy4xODYgU2FmYXJpLzUzNy4zNiIsImxpc3RfcGx1Z2luIjoiUERGIFZpZXdlcixDaHJvbWUgUERGIFZpZXdlcixDaHJvbWl1bSBQREYgVmlld2VyLE1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIsV2ViS2l0IGJ1aWx0LWluIFBERiIsImNhbnZhc19jb2RlIjoiZjhlZWNlMjgiLCJ3ZWJnbF92ZW5kb3IiOiJHb29nbGUgSW5jLiAoQU1EKSIsIndlYmdsX3JlbmRlcmVyIjoiQU5HTEUgKEFNRCwgQU1EIFJhZGVvbihUTSkgR3JhcGhpY3MgKDB4MDAwMDE2MzgpIERpcmVjdDNEMTEgdnNfNV8wIHBzXzVfMCwgRDNEMTEpIiwiYXVkaW8iOiIxMjQuMDQzNDc1Mjc1MTYwNzQiLCJwbGF0Zm9ybSI6IldpbjMyIiwid2ViX3RpbWV6b25lIjoiQXNpYS9TaGFuZ2hhaSIsImRldmljZV9uYW1lIjoiQ2hyb21lIFYxMjguMC42NjEzLjE4NiAoV2luZG93cykiLCJmaW5nZXJwcmludCI6IjY0NDhhMjZhZGM2YTZhYTM5NjlhMjJmMTQ4OTc1MmRkIiwiZGV2aWNlX2lkIjoiIiwicmVsYXRlZF9kZXZpY2VfaWRzIjoiIn0=")
+                    .addHeader("lang", "zh-CN")
+                    .addHeader("sec-ch-ua", "\"Not;A=Brand\";v=\"24\", \"Chromium\";v=\"128\"")
+                    .addHeader("sec-ch-ua-mobile", "?0")
+                    .addHeader("sec-ch-ua-platform", "\"Windows\"")
+                    .addHeader("sentry-trace", "a81c37f92b5744c09bffe1b13c9af14a-a6fb712752cdfb79")
+                    .addHeader("versionname", "2.0.0")
+                    .addHeader("x-token", PrivateConfig.genDan_token)
+                    .addHeader("priority", "u=1, i")
+                    .build();
+            return getResponse(request);
+        } else if (PrivateConfig.genDan_position.equals("3")) {
             Request request = new Request.Builder()
                     .url("https://www.binance.com/bapi/futures/v1/friendly/future/copy-trade/lead-data/positions?portfolioId=" + genPortfolioId)
 //                    .method("GET", body)
@@ -248,43 +299,98 @@ public class GetPositions {
                     .addHeader("accept-language", "zh-CN,zh;q=0.9")
                     .addHeader("if-none-match", "W/\"091cdf704efe278938b3c5a6634bee7c1\"")
                     .build();
-            Response response = client.newCall(request).execute();
-            String s = response.body().string();
-            if (StringUtils.isNotBlank(s)) {
-                JSONObject jsonObject = JSON.parseObject(s);
-                if ("000000".equals(jsonObject.getString("code"))) {
-                    JSONArray jsonArray = jsonObject.getJSONArray("data");
-                    if(CollectionUtils.isEmpty(jsonArray)){
-                        jsonObject.put("code", "100002001");
-                        jsonObject.put("message", "登录状态失效！或币安仓位出问题了");
-                        return jsonObject.toJSONString();
-                    }
-                    JSONArray jsonArrayNew = new JSONArray();
-                    for (Object o : jsonArray) {
-                        JSONObject trade = (JSONObject) o;
-                        BigDecimal qty = trade.getBigDecimal(PrivateConfig.positionAmount);
-                        if(qty.compareTo(ling) == 0){
-                            continue;
-                        }
-                        jsonArrayNew.add(trade);
-                    }
-                    jsonObject.put("data", jsonArrayNew);
-                    return jsonObject.toJSONString();
-                }
-            }
-            return s;
-        }else if (PrivateConfig.genDan_position.equals("5") || PrivateConfig.genDan_position.equals("6")) {
+            return getS(request);
+        }else if (PrivateConfig.genDan_position.equals("7")) {
+            Request request = new Request.Builder()
+                    .url("https://www.bnappweb.black/bapi/futures/v1/friendly/future/copy-trade/lead-data/positions?portfolioId=" + genPortfolioId)
+                    .addHeader("Host", "www.bnappweb.black")
+                    .addHeader("Cookie", "lang=zh-CN; theme=light; userPreferredCurrency=USD_USD; color=fresh; changeBasisTimeZone=; isRedUpGreenDown=false; cr00=x-desktop-token; bnc-uuid=a06dc75a-4be8-4e23-80df-7a0e01a41dcb; BNC_FV_KEY=33a385687c03a525a4a4a8b2d3b2c9b092300e2c; _ga=GA1.2.1260157785.1786976990; aws-waf-token=ba135b50-0117-413b-a188-bcd0d8382bd8:AQoAdyhXaMA6AAAA:x9V+zN4K4SYsPHp+llZCo0oSDF1VCVsMpoCezyZM6C8E6CYELO1vbPfr4a5P/Gz/fLrwH25LUeYZdtH6NxjZ+594uzm1vRkMLoIpoakQy+9F5v5cN4tneMsy/cK9NcwXWUnhjXh1mg6mR9hrVMWDVj/Tc+w2NZXmoo75wWEkXSmQXGpsTgc3TtdV02TC1XKQCJQF4YKGqzk98WbEHkmlu0M02D0miwdy+RSMJLhnDQ4vSUaEseCem28Acz1/N4IeuNhQWwk4MaqvaXIR; neo-theme=light; BNC_FV_KEY_T=101-mi1El4ktAXbAprpLltwF4OeRknb6kvxg03HoN8ClbQmBy2dPyl%2Bkh2k5BbEU0BRTKE8Rj%2FQd%2FRZOg3%2FxbF18fQ%3D%3D-SzA06rzAgE0omVH9H753bg%3D%3D-1d; BNC_FV_KEY_EXPIRE=1788546551539; bu_s=electron; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%221050893068%22%2C%22first_id%22%3A%221a010144596b3b-031a446839df458-4a626a67-2073600-1a0101445971296%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E7%9B%B4%E6%8E%A5%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC_%E7%9B%B4%E6%8E%A5%E6%89%93%E5%BC%80%22%2C%22%24latest_referrer%22%3A%22%22%2C%22%24latest_utm_source%22%3A%22electron%22%7D%2C%22identities%22%3A%22eyIkaWRlbnRpdHlfY29va2llX2lkIjoiMWEwMTAxNDQ1OTZiM2ItMDMxYTQ0NjgzOWRmNDU4LTRhNjI2YTY3LTIwNzM2MDAtMWEwMTAxNDQ1OTcxMjk2IiwiJGlkZW50aXR5X2xvZ2luX2lkIjoiMTA1MDg5MzA2OCJ9%22%2C%22history_login_id%22%3A%7B%22name%22%3A%22%24identity_login_id%22%2C%22value%22%3A%221050893068%22%7D%7D")
+                    .addHeader("accept", "*/*")
+                    .addHeader("accept-language", "zh-CN")
+                    .addHeader("bnc-level", "0")
+                    .addHeader("bnc-location", "CN")
+                    .addHeader("bnc-time-zone", "Asia/Shanghai")
+                    .addHeader("bnc-uuid", "temp-18b284b5-0a37-454c-aeba-d9d7a2b7df4e")
+                    .addHeader("content-type", "application/json")
+                    .addHeader("fvideo-id", "33a385687c03a525a4a4a8b2d3b2c9b092300e2c")
+                    .addHeader("fvideo-token", "2qdj6Ct6a2epwH5OvWFXOgGkH0gckRuVIsu/LawPTWHkZSZGI5D58OMjc//W/g/x+W109qEcmusvM/1kYuyup4qQ46TM1eckH6GlNCOgQGnapjKCfRSe+NdX2GkBpuLoPxBV5rXzdEh2GUFAHFUosD0/EXUZwdE4s8m6nC+hh0r87asSfqEko8qfzGHHiocnk=3b")
+                    .addHeader("referer", "https://www.bnappweb.black/zh-CN/copy-trading/lead-details/5154344801714752768")
+                    .addHeader("sec-fetch-dest", "empty")
+                    .addHeader("sec-fetch-mode", "cors")
+                    .addHeader("sec-fetch-site", "same-origin")
+                    .addHeader("user-agent", "Binance/2.2.1 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.133 Safari/537.36")
+                    .addHeader("x-passthrough-token", "")
+                    .addHeader("x-trace-id", "5119bb45-2e70-42da-b057-415e86ff941b")
+                    .addHeader("x-ui-request-trace", "5119bb45-2e70-42da-b057-415e86ff941b")
+                    .addHeader("bnc-currency", "USD")
+                    .addHeader("bnc-req-src", "webview")
+                    .addHeader("clienttype", "electron")
+                    .addHeader("csrftoken", "732701e3129b5da0fe10aac35f82163d")
+                    .addHeader("device-info", "eyJzY3JlZW5fcmVzb2x1dGlvbiI6IjE5MjAsMTA4MCIsImF2YWlsYWJsZV9zY3JlZW5fcmVzb2x1dGlvbiI6IjE5MjAsMTAzMiIsInN5c3RlbV92ZXJzaW9uIjoiV2luZG93cyAxMCIsImJyYW5kX21vZGVsIjoidW5rbm93biIsInN5c3RlbV9sYW5nIjoiemgtQ04iLCJ0aW1lem9uZSI6IkdNVCswODowMCIsInRpbWV6b25lT2Zmc2V0IjotNDgwLCJ1c2VyX2FnZW50IjoiQmluYW5jZS8yLjIuMSBNb3ppbGxhLzUuMCAoV2luZG93cyBOVCAxMC4wOyBXaW42NDsgeDY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvMTQwLjAuNzMzOS4xMzMgU2FmYXJpLzUzNy4zNiIsImxpc3RfcGx1Z2luIjoiUERGIFZpZXdlcixDaHJvbWUgUERGIFZpZXdlcixDaHJvbWl1bSBQREYgVmlld2VyLE1pY3Jvc29mdCBFZGdlIFBERiBWaWV3ZXIsV2ViS2l0IGJ1aWx0LWluIFBERiIsImNhbnZhc19jb2RlIjoiNmIwYmEwZTkiLCJ3ZWJnbF92ZW5kb3IiOiJHb29nbGUgSW5jLiAoQU1EKSIsIndlYmdsX3JlbmRlcmVyIjoiQU5HTEUgKEFNRCwgQU1EIFJhZGVvbihUTSkgR3JhcGhpY3MgKDB4MDAwMDE2MzgpIERpcmVjdDNEMTEgdnNfNV8wIHBzXzVfMCwgRDNEMTEpIiwiYXVkaW8iOiIxMjQuMDQzNDc1Mjc1MTYwNzQiLCJwbGF0Zm9ybSI6IldpbjMyIiwid2ViX3RpbWV6b25lIjoiQXNpYS9TaGFuZ2hhaSIsImRldmljZV9uYW1lIjoiQ2hyb21lIFYxNDAuMC43MzM5LjEzMyAoV2luZG93cykiLCJmaW5nZXJwcmludCI6IjI4NTIxNGNhMmNhMTg4MzEyOTExMWU3ZjEyNzA2YzdiIiwiZGV2aWNlX2lkIjoiIiwicmVsYXRlZF9kZXZpY2VfaWRzIjoiIn0=")
+                    .addHeader("lang", "zh-CN")
+                    .addHeader("sec-ch-ua", "\"Not=A?Brand\";v=\"24\", \"Chromium\";v=\"140\"")
+                    .addHeader("sec-ch-ua-mobile", "?0")
+                    .addHeader("sec-ch-ua-platform", "\"Windows\"")
+                    .addHeader("versionname", "2.2.1")
+                    .addHeader("x-token", PrivateConfig.genDan_token)
+                    .addHeader("if-none-match", "W/\"0fb6ef48046eecdff50259dba1b50554c\"")
+                    .addHeader("priority", "u=1, i")
+                    .build();
+            return getS(request);
+        } else if (PrivateConfig.genDan_position.equals("8")) {
+            Request request = new Request.Builder()
+                    .url("https://native.binance.com/bapi/futures/v1/friendly/future/copy-trade/lead-data/positions?portfolioId=" + genPortfolioId)
+                    .addHeader("Host", "native.binance.com")
+                    .addHeader("x-trace-id", "35C3E0BD-634E-4958-90F6-0E91A60708D3")
+                    .addHeader("accept", "*/*")
+                    .addHeader("device-info", "eyJkZXZpY2VfY3VzdG9tX25hbWUiOiJpUGhvbmUiLCJhcHBfaW5zdGFsbF9kYXRlIjoiMjAyNi0wNy0zMCAwMzo1NTowOCIsInNjcmVlbl9yZXNvbHV0aW9uIjoiKDQxNC4wLCA4OTYuMCkiLCJkaXNrX3NpemUiOiIxMTMuMzVHIiwiY2FycmllcnMiOiItLSIsImRldmljZV91dWlkIjoiMjQ4QjZDOTEtNDlCNS00NUYyLUJDMDktOERBQUYwOEJGMDU0IiwiY3B1X21lbW9yeV9zaXplIjoiMzg1MiIsImJyYW5kX21vZGVsIjoiaVBob25lIDExIiwic3lzdGVtX2xhbmciOiJ6aC1IYW5zLUNOIiwib3BlcmF0b3IiOiItLSIsInRpbWV6b25lIjoiR01UKzgiLCJpZGVudGlmaWNhdGlvbl90eXBlIjoiRmFjZUlEIiwiY2FycmllcnNDb3VudHJ5IjoiLS0iLCJzeXN0ZW1fdmVyc2lvbiI6IjI2LjUuMiIsImNwdV90eXBlIjoiQ1BVX1RZUEVfQVJNNjQiLCJkZXZpY2VfaWQiOiIxNzg4MzU0Mzc3MjQ1cFpmUGxBYXQ1WmZ1ckFFbzBDQSIsImRldmljZV9uYW1lIjoiaVBob25lIiwiY3B1X251bSI6IjYifQ==")
+                    .addHeader("x-token", PrivateConfig.genDan_token)
+                    .addHeader("x-seccheck-sig", "i2.0.1#wAAAAEAAAAATAAAAAAAAAAB5DlWAtZ07ndfCcFsUf-yeOEsTcn90YTspNkZ02wmZFwWCDnKPZtpXMg5SS_ZbVf2k6uIrIuP27W-8dxUtRt5AwgKLmE4_GXqkFJ_IjcMTplikZB9CT8LENo7r_ArsJ5Yuhh0LkS496GlYvpV1scpWx1mJkCkfhmoTsB-7XjDtyhKnhkfL3ITWju31HV7-OtyKkEtiF3TDD16cV0yHQp_hjofgkmB723DtmaKXiCN8wPD3xymfs_agDAQx4OqIYMBuGJ0Y1ep-gjp0YeOsk_5HkTmw")
+                    .addHeader("lang", "zh-CN")
+                    .addHeader("mclient-x-tag", "tvXLzOPgJFiMa8Omltoo")
+                    .addHeader("user-agent", "BNCAlamofire/5.6.4")
+                    .addHeader("isnight", "false")
+                    .addHeader("bnc-uuid", "f8f8639ce5234f629c5531eaf30b3423")
+                    .addHeader("bnc-req-src", "mp")
+                    .addHeader("bnc-level", "2")
+                    .addHeader("priority", "u=3, i")
+                    .addHeader("bnc-app-channel", "appstore")
+                    .addHeader("bnc-app-mode", "pro")
+                    .addHeader("referer", "https://www.servicesbinance.com/Z2e4jWDZan8ZxEUTT77Cnj/0.1.199")
+                    .addHeader("clienttype", "ios")
+                    .addHeader("bnc-currency", "USD")
+                    .addHeader("x-passthrough-token", "eyJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3ODg1NzQwOTUsImlzcyI6Imh0dHBzOi8vYmluYW5jZS5jb20iLCJzdWIiOiJBUFBMRV9BUFBfQVRURVNUIiwiZGV2aWNlSWQiOiIyMTNEOEU3N0I0QTdEQUVDQzVEQUYyNUJGNDc1NjdGOSIsImV4cCI6MTc4ODY2MDQ5NSwibmJmIjoxNzg4NTc0MDk1fQ.hDrpsb9ZrMOWn1tipYNH62auCCeUIcu88yGnmrXbptrb9Vw2aisQXnYbiQzm5utgq0ResDNtc5wLdBf7t68k7wmpeTnL-zlovVR3BEi472Uxd14_t9viz1GZ51B86y9qodEDCqS3SuVKFcJJhYynIMiFFXZzn8Wg4HxesSPg9bs")
+                    .addHeader("accept-language", "zh-Hans-CN;q=1.0")
+                    .addHeader("versioncode", "3.18.3")
+                    .addHeader("e2e_request_source", "mp")
+                    .addHeader("fvideo-id", "13289ccce628a8ad9dc4b2cd72cc978c2e7515ec")
+                    .addHeader("nez-host-id", "Z2e4jWDZan8ZxEUTT77Cnj")
+                    .addHeader("bnc-time-zone", "Asia/Shanghai")
+                    .addHeader("bnc-location", "CN")
+                    .addHeader("content-type", "application/json")
+                    .addHeader("fvideo-token", "7BCG5DwsrepgKUXU6EtECH0sm1gdJfrnCVi8JV8i2fcaapPUe1lSkTsIPY4QjAKBrFKZmfP6nIF8GXfvxqnvYJhO+KTBbdoFTfDKkGr4yqODZa+sYS2ugCZp4qbzqrmHWVmM2hEOiFZ6ktSDdt/RFa8wyj53ShkWtg3Oa+wH6iUW9AdgxjQoQG5PVL2zDKYko=07")
+                    .addHeader("x-seccheck-token", "i2.0.1#YAEAAKABAAAzAQAAIAAAAMLZbiKB5h0CVN1xS61ldbXqneBwbFcHc053-gIU2OTOIAyuv1OZ-coraexDMUoJyMC9_nomQnRMN013hNNjaQdTfNNNMjmNXY8jDJN93amFlE2ZPJOQFvkLr4tWyNEHc1piAOTbM1C-GEGdQZ0MEC-OSkuLeP53Qj0v8jwI-WEjnxiOS1pVC1uFoBTZ2hozn9HV8yf7xheGZbbxu6Fcb6LI4K4qK5I-chepg6IrL3WQACkHDQKQ74WHF-n-ce5u7saUposTCQjwOJHQzITelMKBSyQQrZZAcy1GeHSNvUWG6oMeaL7eSIDakKwZU9VqjBKC8PWK3cgh-maI0GtEQQuayfXtBziAeYR-_IOeL-3TIlEtqRlFk_lHE5I-L3RJ2cSilwQ5HhgOzV1MDoyhNmAshIszB4wEVfx8fp4ijfSso-9bbXK0ZtfBZxBvdmAGYt10BBDUuFal4o8dJ02uGZlgYvsBvArZCM5Qk5qOzxXh-xWMJNqvR6ja1k-7lD13kZC5Hn51scQ0_Ct19gwHDBXgT-Ek7HUQlsvtrHoI6wKuoArvn4yzSLezsUFJ3sYe4nXAmhPb0vANHjOl7azBAlKE-JnF1BE_d8liCpL-J5zknFngRt-DsMBt2GM3LQqhu3q9heo#1816B674")
+                    .addHeader("bnc-app-id", "1")
+                    .addHeader("bnc-neo-theme", "light_glacier")
+                    .build();
+            return getS(request);
+        } else if (PrivateConfig.genDan_position.equals("5") || PrivateConfig.genDan_position.equals("6")) {
             return getCongMingQian(genPortfolioId);
-        }else {
+        } else {
             return getPostionPrivate(genPortfolioId);
         }
 
 
     }
 
+    public static String getResponse(Request request) throws IOException {
+        try (Response response = PrivateConfig.HTTP_CLIENT.newCall(request).execute()) {
+            return response.body().string();
+        }
+    }
+
     public static String getCongMingQian(String genPortfolioId) throws IOException {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
+
         Request request;
         if (PrivateConfig.genDan_position.equals("5")){
             request = new Request.Builder()
@@ -351,10 +457,7 @@ public class GetPositions {
                     .addHeader("if-none-match", "W/\"0a03b50b211c0b2173ecc06aa2554b319\"")
                     .build();
         }
-
-        Response response = client.newCall(request).execute();
-
-        String s = response.body().string();
+        String s = getResponse(request);
         if (StringUtils.isNotBlank(s)) {
             JSONObject jsonObject = JSON.parseObject(s);
             if ("000000".equals(jsonObject.getString("code"))) {
@@ -385,8 +488,7 @@ public class GetPositions {
      * @throws IOException
      */
     public static String getPostionPrivate(String genPortfolioId) throws IOException {
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
+
         Request request = new Request.Builder()
                 .url("https://www.binance.com/bapi/futures/v1/friendly/future/copy-trade/lead-data/positions?portfolioId=" + genPortfolioId)
                 .method("GET", null)
@@ -416,13 +518,16 @@ public class GetPositions {
                 .addHeader("content-type", "application/json")
                 .addHeader("user-agent", "okhttp/4.11.0")
                 .build();
-        Response response = client.newCall(request).execute();
-        String s = response.body().string();
+        return getS(request);
+    }
+
+    private static String getS(Request request) throws IOException {
+        String s = getResponse(request);
         if (StringUtils.isNotBlank(s)) {
             JSONObject jsonObject = JSON.parseObject(s);
             if ("000000".equals(jsonObject.getString("code"))) {
                 JSONArray jsonArray = jsonObject.getJSONArray("data");
-                if(CollectionUtils.isEmpty(jsonArray)){
+                if (CollectionUtils.isEmpty(jsonArray)) {
                     jsonObject.put("code", "100002001");
                     jsonObject.put("message", "登录状态失效！！或币安仓位出问题了");
                     return jsonObject.toJSONString();
@@ -431,10 +536,9 @@ public class GetPositions {
                 for (Object o : jsonArray) {
                     JSONObject trade = (JSONObject) o;
                     BigDecimal qty = trade.getBigDecimal(PrivateConfig.positionAmount);
-                    if(qty.compareTo(ling) == 0){
-                        continue;
+                    if (qty.compareTo(ling) != 0) {
+                        jsonArrayNew.add(trade);
                     }
-                    jsonArrayNew.add(trade);
                 }
                 jsonObject.put("data", jsonArrayNew);
                 return jsonObject.toJSONString();
