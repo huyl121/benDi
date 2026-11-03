@@ -58,10 +58,10 @@ public class Musk {
         map.put("ZENUSDT",	0.7	);*/
 
 
-        int isOk = 3; //0：币安，1：ok的概况，2：okd带单；3：聪明钱
+        int isOk = 0; //0：币安，1：ok的概况，2：okd带单；3：聪明钱
         JSONArray jsonArray = new JSONArray();
-        getOp(jsonArray, "4623131157906423297", System.currentTimeMillis(), isOk, 1);
-        BigDecimal beiShu = new BigDecimal("0.00074");
+        getOp(jsonArray, "5075332206126952449", System.currentTimeMillis(), isOk, 1);
+        BigDecimal beiShu = new BigDecimal("0.025");
         Map<String, BigDecimal> mapCount = new HashMap();
 
 
@@ -99,6 +99,14 @@ public class Musk {
                 symbol = jsonObject.getString("baseName") + "USDT";
             }else if(isOk == 2){
                 symbol = jsonObject.getString("instId").split("-")[0] + "USDT";
+            }
+
+            String side = jsonObject.getString("side");
+            String positionSide = jsonObject.getString("positionSide");
+            BigDecimal realizedProfit = jsonObject.getBigDecimal("realizedProfit");
+
+            if(!PrivateConfig.isMai(side, positionSide, realizedProfit)){
+                continue;
             }
 
             if (!mapCount.containsKey(symbol)) {
