@@ -22,7 +22,7 @@ public class ShiJianJianGe {
         // 对https也开启代理
         System.setProperty("https.proxySet", "true");
         System.setProperty("https.proxyHost", "127.0.0.1");
-        System.setProperty("https.proxyPort", "10819");
+        System.setProperty("https.proxyPort", "10809");
 
         args = new String[2];
         PrivateConfig.printLog("开始啦");
@@ -40,7 +40,7 @@ public class ShiJianJianGe {
 
     }
     static String genDan_portfolioId = null;
-    static boolean 只统计钱 = false;
+    static boolean 只统计钱 = true;
 
     public static void method() throws InterruptedException, ParseException {
         ThreadPoolExecutor threadPoolExecutor =
@@ -53,7 +53,7 @@ public class ShiJianJianGe {
         List<String> list = new ArrayList<String>(Arrays.asList(
 
 
-                "4734274187381923585"
+                "5251947958462815488"
 
 
 
@@ -102,7 +102,7 @@ public class ShiJianJianGe {
             }
 
 
-//            youMeiYouZaoJia(threadPoolExecutor);
+            youMeiYouZaoJia(threadPoolExecutor);
             tian = 0L;
             tradeSet.clear();
             tradeMap.clear();
@@ -201,7 +201,7 @@ public class ShiJianJianGe {
             if(error>=3){
                 break;
             }
-            JSONArray jsonArray = getPositionHistorys(threadPoolExecutor, i, 50);
+            JSONArray jsonArray = getPositionHistorys(threadPoolExecutor, i, 10);
             if(CollectionUtils.isEmpty(jsonArray)){
                 i--;
                 error++;
@@ -242,7 +242,7 @@ public class ShiJianJianGe {
 
                     String side = trade.getString("side");
                     //价格差赢率
-                    BigDecimal yingLv = (avgClosePrice.subtract(avgCost).divide(avgCost,3,BigDecimal.ROUND_HALF_UP));
+                    BigDecimal yingLv = (avgClosePrice.subtract(avgCost).divide(avgCost,5,BigDecimal.ROUND_HALF_UP));
                     if("Short".equals(side)){
                         yingLv = yingLv.multiply(new BigDecimal("-1"));
                     }
@@ -351,7 +351,8 @@ public class ShiJianJianGe {
         Callable callable = new Callable() {
             @Override
             public String call() throws Exception {
-                return Postman.sendPost("https://www.binance.com/bapi/futures/v1/public/future/copy-trade/lead-portfolio/position-history",
+//                return Postman.sendPost("https://www.binance.com/bapi/futures/v1/public/future/copy-trade/lead-portfolio/position-history",
+                return Postman.sendPost("https://www.binance.com/bapi/futures/v1/friendly/future/copy-trade/lead-portfolio/position-history",
                         "{\"pageNumber\":" + pageNumber + ",\"pageSize\":" + pageSize + ",\"portfolioId\":\"" + genDan_portfolioId + "\"}", PrivateConfig.genDan_cookie, PrivateConfig.genDan_token);
             }
         };
