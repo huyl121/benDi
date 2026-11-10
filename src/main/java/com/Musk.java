@@ -8,6 +8,8 @@ import com.example.bian.client.RequestOptions;
 import com.example.bian.client.SyncRequestClient;
 import com.example.bian.client.bushu.PrivateConfig;
 import com.example.bian.client.bushu.T5;
+import com.example.bian.client.model.enums.OrderSide;
+import com.example.bian.client.model.enums.PositionSide;
 import com.example.bian.client.model.market.ExchangeInfoEntry;
 import com.example.bian.client.model.market.ExchangeInformation;
 import com.sun.jna.platform.win32.WinDef;
@@ -58,10 +60,10 @@ public class Musk {
         map.put("ZENUSDT",	0.7	);*/
 
 
-        int isOk = 0; //0：币安，1：ok的概况，2：okd带单；3：聪明钱
+        int isOk = 1; //0：币安，1：ok的概况，2：okd带单；3：聪明钱
         JSONArray jsonArray = new JSONArray();
-        getOp(jsonArray, "5075332206126952449", System.currentTimeMillis(), isOk, 1);
-        BigDecimal beiShu = new BigDecimal("0.025");
+        getOp(jsonArray, "9F25A5FBE6CFF912", System.currentTimeMillis(), isOk, 1);
+        BigDecimal beiShu = new BigDecimal("0.0025");
         Map<String, BigDecimal> mapCount = new HashMap();
 
 
@@ -101,12 +103,19 @@ public class Musk {
                 symbol = jsonObject.getString("instId").split("-")[0] + "USDT";
             }
 
-            String side = jsonObject.getString("side");
+            String side = jsonObject.getString("side").toUpperCase();
             String positionSide = jsonObject.getString("positionSide");
             BigDecimal realizedProfit = jsonObject.getBigDecimal("realizedProfit");
 
-            if(!PrivateConfig.isMai(side, positionSide, realizedProfit)){
-                continue;
+            if(isOk == 1){
+                positionSide = jsonObject.getString("posSide").toUpperCase();
+                if(!isMai(side, positionSide)){
+                    continue;
+                }
+            }else {
+                if (!PrivateConfig.isMai(side, positionSide, realizedProfit)) {
+                    continue;
+                }
             }
 
             if (!mapCount.containsKey(symbol)) {
@@ -160,6 +169,32 @@ public class Musk {
         System.out.println(zongShu);
         System.out.println(chengGong / zongShu);
     }
+
+        public static boolean isMai(String side, String positionSide){
+            if ("NET".equals(positionSide)) {
+                //单向
+                if ("BUY".equals(side)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }else {
+            /*做多
+            买：side=BUY,positionSide=LONG
+            卖：side=SELL,positionSide=LONG
+
+            做空
+            买：side=SELL,positionSide=SHORT
+            卖：side=BUY,positionSide=SHORT*/
+                if((OrderSide.BUY.toString().equals(side) && PositionSide.LONG.toString().equals(positionSide))
+                        || (OrderSide.SELL.toString().equals(side) && PositionSide.SHORT.toString().equals(positionSide))){
+                    return true;
+                }else {
+                    return false;
+                }
+
+            }
+        }
 
     public static void getOp(JSONArray list, String portfolioId, Long currentTime, int isOk, int page) throws IOException, InterruptedException {
         if (list.size() > 99) {
